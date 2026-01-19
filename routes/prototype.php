@@ -28,8 +28,17 @@ Route::get("be-zone-multiplier/{id}", "HomeController@be_zone_multiplier_detail"
 Route::post("be-zone-multiplier/store", "HomeController@be_zone_multiplier_store")->name("be.zone_multiplier_store");
 
 Route::get("run-migrate", function(){
-    Artisan::call('migrate');
-    return "database migrated";
+    // Cek apakah STDIN sudah didefinisikan, jika belum, buat manual
+    if (!defined('STDIN')) {
+        define('STDIN', fopen('php://stdin', 'r'));
+    }
+
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return Artisan::output();
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
 });
 
 Route::prefix("job-managements")->group(function(){

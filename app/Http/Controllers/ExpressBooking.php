@@ -607,14 +607,38 @@ class ExpressBooking extends Controller
                     $sc['overweight'] += $surcharge->overweight_price * $item['total_paket'];
                 }
 
+                $overSizeLimit = [100,80];
+
                 if(empty($sur)){
-                    if($item['panjang'] >= floatval($surcharge->oversize_limit) || $item['lebar'] >= floatval($surcharge->oversize_limit) || $item['tinggi'] >= floatval($surcharge->oversize_limit)){
+                    // Buat array dan urutkan untuk mendapatkan nilai terpanjang, menengah, dan terpendek
+                    $dimensi = [
+                        'panjang' => $item['panjang'],
+                        'lebar' => $item['lebar'],
+                        'tinggi' => $item['tinggi'],
+                    ];
+                    arsort($dimensi); // urutkan dari besar ke kecil
+                    $dimensi_urut = array_values($dimensi); // [terpanjang, tengah, terpendek]
+                    // cek apakah terpanjang > 100, jika tidak, cek apakah tengah lebih dari 80
+                    if($dimensi_urut[0] > 100){
                         $sur = [
-                            "label" => "Oversize",
+                            "label" => "Oversize > 100cm",
+                            "price" => $surcharge->oversize_price
+                        ];
+                        $sc['oversize'] += $surcharge->oversize_price * $item['total_paket'];
+                    } elseif($dimensi_urut[1] > 80){
+                        $sur = [
+                            "label" => "Oversize > 80cm",
                             "price" => $surcharge->oversize_price
                         ];
                         $sc['oversize'] += $surcharge->oversize_price * $item['total_paket'];
                     }
+                    // if($item['panjang'] >= floatval($surcharge->oversize_limit) || $item['lebar'] >= floatval($surcharge->oversize_limit) || $item['tinggi'] >= floatval($surcharge->oversize_limit)){
+                    //     $sur = [
+                    //         "label" => "Oversize",
+                    //         "price" => $surcharge->oversize_price
+                    //     ];
+                    //     $sc['oversize'] += $surcharge->oversize_price * $item['total_paket'];
+                    // }
                 }
 
                 if(empty($sur)){

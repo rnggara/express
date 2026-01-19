@@ -1,0 +1,92 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class $CLASS_NAME$ extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+
+        $metrics = [
+            "table_column" => "text"
+        ];
+
+        $table_name = "$name$";
+
+        foreach($metrics as $i => $val){
+            if (!Schema::hasColumn($table_name, $i))
+            {
+                Schema::table($table_name, function (Blueprint $table) use($i, $val)
+                {
+                    if($val == "text"){
+                        $table->text($i)->nullable();
+                    }
+
+                    if($val == "string"){
+                        $table->string($i, 255)->nullable();
+                    }
+
+                    if($val == "integer"){
+                        $table->integer($i)->nullable();
+                    }
+
+                    if($val == "date"){
+                        $table->date($i)->nullable();
+                    }
+
+                    if($val == "timestamp"){
+                        $table->timestamp($i)->nullable();
+                    }
+
+                    if($val == "decimal"){
+                        $table->decimal($i, 20, 2)->nullable();
+                    }
+                });
+            } else {
+                Schema::table($table_name, function (Blueprint $table) use($i, $val)
+                {
+                    if($val == "text"){
+                        $table->text($i)->nullable()->change();
+                    }
+
+                    if($val == "string"){
+                        $table->string($i, 255)->nullable()->change();
+                    }
+
+                    if($val == "integer"){
+                        $table->integer($i)->nullable()->change();
+                    }
+
+                    if($val == "date"){
+                        $table->date($i)->nullable()->change();
+                    }
+
+                    if($val == "timestamp"){
+                        $table->timestamp($i)->nullable()->change();
+                    }
+
+                    if($val == "decimal"){
+                        $table->decimal($i, 20, 2)->nullable()->change();
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+
+    }
+}

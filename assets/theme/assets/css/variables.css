@@ -1,0 +1,20 @@
+:root {
+    --bs-primary: #5936d9;
+    --bs-primary-active: #5936d9;
+    --bs-primary-text-emphasis: #5234BF;
+    --bs-text-primary: #5936d9;
+    --bs-component-active-bg: #5936d9;
+    --bs-component-hover-color: #5936d9;
+    --bs-component-checked-bg: #5936d9;
+    --bs-menu-link-color-hover: #5936d9;
+    --bs-menu-link-color-show: #5936d9;
+    --bs-menu-link-color-here: #5936d9;
+    --bs-menu-link-color-active: #5936d9;
+    --bs-ribbon-label-bg: #5936d9;
+    --bs-ribbon-label-border-color: #5234BF;
+
+    --bs-info: ##009ef7;
+    --bs-info-active: ##009ef7;
+    --bs-info-text-emphasis: #005d91;
+    --bs-text-info: ##009ef7;
+  }

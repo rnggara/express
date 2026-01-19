@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 
 Route::get("be-orders/", "HomeController@be_order")->name("be.orders");
 Route::get("be-orders/views/{id}", "HomeController@be_order_views")->name("be.orders.views");
@@ -25,6 +26,11 @@ Route::post("be-refund/store", "HomeController@be_refund_store")->name("be.refun
 Route::get("be-zone-multiplier/", "HomeController@be_zone_multiplier")->name("be.zone_multiplier");
 Route::get("be-zone-multiplier/{id}", "HomeController@be_zone_multiplier_detail")->name("be.zone_multiplier_detail");
 Route::post("be-zone-multiplier/store", "HomeController@be_zone_multiplier_store")->name("be.zone_multiplier_store");
+
+Route::get("run-migrate", function(){
+    Artisan::call('migrate');
+    return "database migrated";
+});
 
 Route::prefix("job-managements")->group(function(){
     Route::get("/", "JobVacancyController@index")->name("job.index");
@@ -68,6 +74,7 @@ Route::prefix("cms")->group(function(){
         Route::get("/", "CMSController@applicant")->name("cms.applicant.index");
         Route::post("/update", "CMSController@applicant_update")->name("cms.applicant.update");
         Route::get("/delete/{type}/{id?}", "CMSController@applicant_delete")->name("cms.applicant.delete");
+        Route::get("/order/{type}/{id?}", "CMSController@applicant_order")->name("cms.applicant.order");
     });
 
     Route::prefix("branding")->group(function(){

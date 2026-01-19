@@ -15,6 +15,7 @@ use App\Models\Kjk_job_view;
 use App\Models\User_job_vacancy;
 use App\Models\Master_company;
 use App\Models\Master_province;
+use App\Models\Pref_image_slider;
 use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
@@ -99,7 +100,9 @@ class LandingPageController extends Controller
         $dari = Express_from::get();
         $tujuan = Express_negara_tujuan::get();
 
-        return view("welcome", compact("lp_applicant", "test", "artikel", "hot_artikel", "newArtikel", "job_list", "produk", "kategori", "dari", "tujuan"));
+        $sliders = Pref_image_slider::orderBy('order')->get();
+
+        return view("welcome", compact("lp_applicant", "test", "artikel", "hot_artikel", "newArtikel", "job_list", "produk", "kategori", "dari", "tujuan", 'sliders'));
     }
 
     function index_employer(){

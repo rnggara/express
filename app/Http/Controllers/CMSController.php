@@ -10,10 +10,12 @@ use App\Models\Pref_landing_employer;
 use App\Models\Pref_page;
 use App\Models\Express_faq as Faq;
 use App\Models\Express_review as Review;
+use App\Models\Pref_image_slider;
 use App\Models\User_stories_model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class CMSController extends Controller
 {
@@ -49,7 +51,9 @@ class CMSController extends Controller
             $data['artikel_category'] = $artikel_category;
         }
 
-        return view("cms.applicant.index", compact("v", "list_menu", "lp", "list_test", "data"));
+        $slider = Pref_image_slider::orderBy("order")->get();
+
+        return view("cms.applicant.index", compact("v", "list_menu", "lp", "list_test", "data", 'slider'));
     }
 
     function applicant_delete($type, $id){
@@ -57,6 +61,27 @@ class CMSController extends Controller
             $artikel = Artikel_model::find($id);
             $artikel->delete();
         }
+        if($type == 'slider'){
+            $data = Pref_image_slider::find($id);
+            $order = $data->order;
+            $data->delete();
+            Pref_image_slider::where('order', ">", $order)->decrement('order');
+        }
+
+        return redirect()->back();
+    }
+
+    function applicant_order($type, $id){
+        $data = Pref_image_slider::find($id);
+        $order = $data->order;
+        $p = $type == "up" ? "<" : ">";
+        $next = Pref_image_slider::where("order", $p, $order)
+            ->orderBy("order", $type == "up" ? "desc" : "asc")
+            ->first();
+        $data->order = $next->order;
+        $next->order = $order;
+        $data->save();
+        $next->save();
 
         return redirect()->back();
     }
@@ -85,6 +110,40 @@ class CMSController extends Controller
                 }
             }
             $artikel->save();
+        } elseif($request->type == "slider"){
+            $validator = Validator::make($request->all(), [
+                'image' => [
+                    'required',
+                    'mimes:png,jpg,jpeg',
+                ],
+                'duration' => "required|gt:0"
+            ]);
+
+            if($validator->fails()){
+                return redirect()->back()->withErrors($validator->errors())
+                    ->with('modal', "#modalAdd");
+            }
+
+            $image = $request->file('image');
+            if(!empty($image)){
+                $key = "slider";
+                $d = date("YmdHis");
+                $newName = $key."_$d"."_".$image->getClientOriginalName();
+                if($image->move($this->dir, $newName)){
+                    $last = Pref_image_slider::orderBy("order", 'desc')->first();
+                    $order = ($last->order ?? 0) + 1;
+
+                    $data = new Pref_image_slider();
+                    $data->path = "media/attachments/$newName";
+                    $data->duration = $request->duration;
+                    $data->order = $order;
+                    $data->save();
+                }
+            }
+        } elseif($request->type == "slider_duration"){
+            $data = Pref_image_slider::find($request->id);
+            $data->duration = $request->duration;
+            $data->save();
         } else {
             $lp = Pref_landing_applicant::firstOrNew(["company_id" => Session::get("company_id")]);
             if($request->type == "mk"){

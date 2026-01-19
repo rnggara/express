@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateExpressFuelChargeTable extends Migration {
+class CreatePrefImageSliderTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -13,12 +13,12 @@ class CreateExpressFuelChargeTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('express_fuel_charges', function(Blueprint $table) {
+		Schema::create('pref_image_sliders', function(Blueprint $table) {
 			$table->increments('id');
-			$table->integer('vendor_id')->nullable();
-			$table->decimal('price', 20, 2)->nullable();
-			$table->date('start_date')->nullable();
-			$table->date('end_date')->nullable();
+			$table->text("path")->nullable();
+			$table->integer("duration")->default(5)->comment('seconds');
+			$table->integer("order")->default(0);
+			$table->integer("status")->default(1);
 			$table->timestamps();
             $table->timestamp("deleted_at")->nullable();
             $table->string("created_by", 50)->nullable();
@@ -35,7 +35,7 @@ class CreateExpressFuelChargeTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('express_fuel_charges');
+		Schema::drop('pref_image_sliders');
 	}
 
 }

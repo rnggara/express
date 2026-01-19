@@ -208,7 +208,20 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div class="w-100 rounded bgi-no-repeat bgi-size-cover bgi-position-center" style="height: 623px; background-image: url('{{ asset($lp_applicant->sec_img ?? "images/blank.png") }}?v={{ time() }}')"></div>
+                                    @if ($sliders->count() > 0)
+                                        <div class="w-100 tns" style="direction: ltr;" id="slidertns">
+                                            <div data-tns="true" data-tns-nav-position="bottom" data-tns-autoplay="false" data-tns-mouse-drag="false" data-tns-controls="false">
+                                                <!--begin::Item-->
+                                                @foreach ($sliders as $item)
+                                                <div class="text-center px-5 pt-5 pt-lg-10 px-lg-10" data-duration="{{ $item->duration }}">
+                                                    <div class="w-100 rounded bgi-no-repeat bgi-size-cover bgi-position-center" style="height: 623px; background-image: url('{{ asset($item->path) }}?v={{ time() }}')"></div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="w-100 rounded bgi-no-repeat bgi-size-cover bgi-position-center" style="height: 623px; background-image: url('{{ asset($lp_applicant->sec_img ?? "images/blank.png") }}?v={{ time() }}')"></div>
+                                    @endif
                                     {{-- <img src="{{ asset($lp_applicant->sec_img ?? "images/blank.png") }}?v={{ time() }}" class="w-md-50 w-100" alt=""> --}}
                                 </div>
                                 {{-- end:Top --}}
@@ -611,6 +624,7 @@
         <script src="{{ asset("theme/assets/plugins/custom/formrepeater/formrepeater.bundle.js") }}"></script>
         @include('layouts._scripts')
         <script>
+
             // Format options
             var optionFormat = function(item) {
                 if ( !item.id ) {
@@ -718,6 +732,47 @@
 
             //     // $(".tagify__input").css("margin-top", "-3px")
             // })
+
+            $(document).ready(function(){
+                $("#slidertns div.tns-nav").addClass("position-absolute bottom-0 end-50")
+                var last_duration = 0
+                var listSlider = []
+                $("#slidertns .tns-item:not(.tns-slide-cloned)").each(function(e){
+                    var duration = $(this).data("duration")
+                    var id = $(this).attr("id")
+                    var spt = id.split("-item")
+                    var idx = spt[1]
+                    console.log(duration)
+                    var col = {
+                        idx : idx,
+                        duration : duration + last_duration
+                    }
+                    last_duration = duration + last_duration
+                    listSlider.push(col)
+                })
+
+                var sc = 0
+
+                setInterval(() => {
+                    var matchingSlider = listSlider.find(function(item) {
+                        return item.duration === sc;
+                    });
+                    if(matchingSlider){
+                        var tgt = (matchingSlider.idx * 1) + 1
+                        if(tgt == listSlider.length){
+                            tgt = 0
+                        }
+                        $(`#slidertns .tns-nav button[data-nav=${tgt}]`).click()
+                    }
+                    if(sc == last_duration){
+                        sc = 0
+                        $(`#slidertns .tns-nav button[data-nav=0]`).click()
+                    }
+                    sc++
+                }, 1000);
+
+                console.log(listSlider)
+            })
         </script>
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->

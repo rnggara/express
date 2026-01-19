@@ -53,6 +53,14 @@
                     { "orderable": false, "targets": 6 }
                 ]
             })
+
+            $("table.table-display").DataTable({
+                sorting: false
+            })
+
+            @if (\Session::has('modal'))
+                $("{{ \Session::get('modal') }}").modal("show")
+            @endif
         })
     </script>
 @endsection
